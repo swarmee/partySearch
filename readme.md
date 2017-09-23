@@ -67,7 +67,7 @@ In this section of the guide we provide a worked example of how to create the ab
 <img src="https://raw.githubusercontent.com/swarmee/partySearch/master/images/real-estate-data-model.png"  width="50%" height="50%">
 </p>
 
-## Loading the Sample Data 
+#### Loading the Sample Data 
 
 It is assumed that you have an elasticsearch cluster running version 6 (beta 2 or up) if not go here → https://www.elastic.co/guide/en/elasticsearch/reference/current/installation.html). The below scripts use the curl command to interact with elasticsearch they assume you are running these commands on the local machine (i.e. localhost) and that the elasticsearch cluster has authentication turned off (if you have authentication turned on you can submit in your username and password with curl requests). 
 
@@ -75,7 +75,7 @@ Some sample data matching the above example has been saved into the repository. 
 
 ```<./load-sample-data-using-curl>curl -H 'Content-Type: application/json' -XPUT 'http://localhost:9200/real-estate-sales?pretty' -d @real-estate-sales.mapping.json```
 
-The key setting in the mapping that will allow us to analyse each level of the data model is called nesting. What this setting does behind the scenes is store the data in that section of the mapping as a separate document, which we can then target with particular queries. 
+The key setting in the mapping that will allow us to analyse each level of the data model is called _nesting_. What this setting does behind the scenes is store the data in that section of the mapping as a separate document, which we can then target with particular queries. 
 
 Once the mapping has been loaded successfully the sample data can be loaded using the following command
 
@@ -154,7 +154,7 @@ The last thing to do now is run the partySearch search template, and review the 
 ## Summary 
 The above theoretical and practical walkthrough should have placed you on a solid footing when considering how to model complex data within elasticsearch, specifically the option of fulfilling event and party level analytical requirements with a single event level index.
 
-## Further Application of This Data Model 
+### Further Application of This Data Model 
 
 We believe that the data model / mapping that we have used should be applicable to pretty much any domain from retail to banking. The role types and some of the details stored will obviously be different between sectors however the structure should be able to be held the same. The below table lists some examples of domains and the applicable roles for those domains to get you thinking of how you could extend the product model explained above. 
 
