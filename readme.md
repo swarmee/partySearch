@@ -54,8 +54,8 @@ To support this product model in elasticsearch we relied heavily on the nested m
 While there are many documents created elasticsearch manages them all as one logical document so if you delete the event all of the nested documents are also deleted.
 
 This data model met both our key requirements;
--Distributed loading and querying for scalability. 
--Storage of common attributes together for simplified searching (some of the nested queries are little complex however the complexity can be hidden using templates).
+- Distributed loading and querying for scalability. 
+- Storage of common attributes together for simplified searching (some of the nested queries are little complex however the complexity can be hidden using templates).
 
 The below worked example is the "generified" version of what we were able to achieve within our PoC, it has been provided in the hope that others can learn from what we have done.   
 
