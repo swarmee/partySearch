@@ -1,0 +1,84 @@
+[
+    {
+    "_id": "c7731b90-855a-11e7-8a2c-4fb1c433f645",
+    "_type": "search",
+    "_source": {
+      "title": "real-estate-sales",
+      "description": "",
+      "hits": 0,
+      "columns": [
+        "auctionSale",
+        "saleDocumentNo",
+        "salePrice",
+        "transactionType"
+      ],
+      "sort": [
+        "_score",
+        "desc"
+      ],
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"real-estate-sales\",\"highlightAll\":true,\"version\":true,\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"default_operator\":\"AND\",\"query\":\"*\"}},\"filter\":[]}"
+      }
+    }
+  },
+{
+    "_id": "11249de0-855b-11e7-8a2c-4fb1c433f645",
+    "_type": "visualization",
+    "_source": {
+      "title": "real-estate-sales - Date Histogram broken down by Sale Type",
+      "visState": "{\"title\":\"real-estate-sales - Date Histogram broken down by Sale Type\",\"type\":\"histogram\",\"params\":{\"grid\":{\"categoryLines\":false,\"style\":{\"color\":\"#eee\"}},\"categoryAxes\":[{\"id\":\"CategoryAxis-1\",\"type\":\"category\",\"position\":\"bottom\",\"show\":true,\"style\":{},\"scale\":{\"type\":\"linear\"},\"labels\":{\"show\":true,\"truncate\":100},\"title\":{\"text\":\"saleDate per week\"}}],\"valueAxes\":[{\"id\":\"ValueAxis-1\",\"name\":\"LeftAxis-1\",\"type\":\"value\",\"position\":\"left\",\"show\":true,\"style\":{},\"scale\":{\"type\":\"linear\",\"mode\":\"normal\"},\"labels\":{\"show\":true,\"rotate\":0,\"filter\":false,\"truncate\":100},\"title\":{\"text\":\"Count\"}}],\"seriesParams\":[{\"show\":\"true\",\"type\":\"histogram\",\"mode\":\"stacked\",\"data\":{\"label\":\"Count\",\"id\":\"1\"},\"valueAxis\":\"ValueAxis-1\",\"drawLinesBetweenPoints\":true,\"showCircles\":true}],\"addTooltip\":true,\"addLegend\":true,\"legendPosition\":\"right\",\"times\":[],\"addTimeMarker\":false},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"enabled\":true,\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"saleDate\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"auctionSale.keyword\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"real-estate-sales\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true,\"default_operator\":\"AND\"}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "b37d2ca0-855c-11e7-8a2c-4fb1c433f645",
+    "_type": "visualization",
+    "_source": {
+      "title": "real-estate-sales - Price Breakdown",
+      "visState": "{\"title\":\"real-estate-sales - Price Breakdown\",\"type\":\"pie\",\"params\":{\"addTooltip\":true,\"addLegend\":true,\"legendPosition\":\"right\",\"isDonut\":true},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"enabled\":true,\"type\":\"filters\",\"schema\":\"segment\",\"params\":{\"filters\":[{\"input\":{\"query\":{\"query_string\":{\"query\":\"salePrice: {0 TO 1000000}\",\"analyze_wildcard\":true,\"default_operator\":\"AND\"}}},\"label\":\"Less 1m\"},{\"input\":{\"query\":{\"query_string\":{\"query\":\"salePrice: {1000000 TO 1500000}\",\"analyze_wildcard\":true,\"default_operator\":\"AND\"}}},\"label\":\"1 to 1.5m\"},{\"input\":{\"query\":{\"query_string\":{\"query\":\"salePrice: {1500000 TO 2000000}\",\"analyze_wildcard\":true,\"default_operator\":\"AND\"}}},\"label\":\"1.5 to 2m\"},{\"input\":{\"query\":{\"query_string\":{\"query\":\"salePrice: {2000000 TO 2500000}\",\"analyze_wildcard\":true,\"default_operator\":\"AND\"}}},\"label\":\"2 to 2.5m\"},{\"input\":{\"query\":{\"query_string\":{\"query\":\"salePrice: {2500000 TO *}\",\"analyze_wildcard\":true,\"default_operator\":\"AND\"}}},\"label\":\"Greater than 2.5m\"}]}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"real-estate-sales\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true,\"default_operator\":\"AND\"}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "006fa920-855d-11e7-8a2c-4fb1c433f645",
+    "_type": "visualization",
+    "_source": {
+      "title": "real-estate-sales - transaction type",
+      "visState": "{\"title\":\"real-estate-sales - transaction type\",\"type\":\"pie\",\"params\":{\"addTooltip\":true,\"addLegend\":true,\"legendPosition\":\"right\",\"isDonut\":true},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"transactionType.keyword\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"real-estate-sales\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true,\"default_operator\":\"AND\"}},\"filter\":[]}"
+      }
+    }
+  },
+{
+    "_id": "e4245040-855c-11e7-8a2c-4fb1c433f645",
+    "_type": "dashboard",
+    "_source": {
+      "title": "real-estate-sales",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"col\":1,\"id\":\"11249de0-855b-11e7-8a2c-4fb1c433f645\",\"panelIndex\":1,\"row\":1,\"size_x\":9,\"size_y\":3,\"type\":\"visualization\"},{\"col\":10,\"id\":\"b37d2ca0-855c-11e7-8a2c-4fb1c433f645\",\"panelIndex\":3,\"row\":1,\"size_x\":3,\"size_y\":3,\"type\":\"visualization\"},{\"col\":1,\"columns\":[\"auctionSale\",\"saleDocumentNo\",\"salePrice\",\"transactionType\"],\"id\":\"c7731b90-855a-11e7-8a2c-4fb1c433f645\",\"panelIndex\":5,\"row\":4,\"size_x\":9,\"size_y\":4,\"sort\":[\"_score\",\"desc\"],\"type\":\"search\"},{\"size_x\":3,\"size_y\":4,\"panelIndex\":6,\"type\":\"visualization\",\"id\":\"006fa920-855d-11e7-8a2c-4fb1c433f645\",\"col\":10,\"row\":4}]",
+      "optionsJSON": "{\"darkTheme\":false}",
+      "uiStateJSON": "{}",
+      "version": 1,
+      "timeRestore": false,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"default_operator\":\"AND\",\"query\":\"*\"}}}],\"highlightAll\":true,\"version\":true}"
+      }
+    }
+  }
+]
