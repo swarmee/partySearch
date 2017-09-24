@@ -41,7 +41,7 @@ To support this product model in elasticsearch we relied heavily on the nested m
 | eventId|eventDate |roleType|partySequence|partyType |fullName|StreeAddress |     
 | -------|--------- | -------|-------------| ---------|--------| ---------   |
 |1       |2009-01-01|        |             |          |        |             |
-|        |          |Seller  |             |          |        ||
+|        |          |Payer  |             |          |        ||
 |        |          |        |1            |individual|||
 |        |||||James Brown||
 |        ||||||12 Wood St|
@@ -49,7 +49,7 @@ To support this product model in elasticsearch we relied heavily on the nested m
 ||||||Bill Brown||
 ||||||Billy Brown||
 |||||||1 High St|
-|||Buyer|||||
+|||Payee|||||
 ||||1|individual|||
 ||||||Mark Rich||
 |||||||22 Low St|
