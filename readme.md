@@ -1,7 +1,7 @@
 # Complex Event Modelling in Elasticsearch
 
 ## Executive Summary
-This guide walks through the theory and practice of modelling complex data events in elasticsearch, with the aim of providing a single event level datastore that is able to support both event and party analysis. It is targeted at data architects designing how data should be modelled in elasticsearch for general business intelligence as well as fraud analysis. 
+This guide walks through the theory and practice of modelling complex data events in elasticsearch for speed and limited data storage, with the aim of providing a single event level datastore that is able to support both event and party analysis. It is targeted at data architects designing how data should be modelled in elasticsearch for general business intelligence as well as fraud analysis. 
 
 ## Modelling Theory 
 Historically our primary approach to store and analyse complex real world events has been relational database tables. Complex events are generally modelled in the below structure leveraging foreign key relationships to represent the context of the characteristics within the original event. The model attempts to model all events in a way that standardises the location of common attributes.
@@ -98,7 +98,7 @@ Aggregations at the top level of the document structure is also super simple. An
 
 ```<./dsl-queries>curl -H 'Content-Type: application/json' -XGET 'http://localhost:9200/real-estate-sales/_search?pretty' -d @sales-per-month-aggregation.dsl```
 
-A terms aggregation has been provided below, it breaks down the number of sales by transaction type. Term aggregations are similar to group bys in SQL, however they are not exactly the same, due to elasticsearch’s distributed architecture effectively a SQL group by is performed on each node in the cluster and the highest frequency results on each cluster are consolidated and then these results are aggregated. 
+A terms aggregation has been provided below, it breaks down the number of sales by transaction type. Term aggregations are similar to group bys in SQL, however they are not exactly the same, due to elasticsearch’s distributed architecture effectively a SQL group by is performed on each shard in the cluster and the highest frequency results on each cluster are consolidated and then these results are aggregated. 
 
 ```<./dsl-queries>curl -H 'Content-Type: application/json' -XGET 'http://localhost:9200/real-estate-sales/_search?pretty' -d @sales-per-month-aggregation.dsl```
 
