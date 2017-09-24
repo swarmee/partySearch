@@ -66,6 +66,7 @@ In this section of the guide we provide a worked example of how to;
 - Create the above data model in elasticsearch, 
 - Populate it with sample data, and 
 - Query event level and party level attributes. 
+
 This example assumes that we are modelling real estate transactions. The basic data model has been fleshed out below. Noting that each name, address, account and id has a type (e.g. a party may have a main and a postal address).
 
 <p align="center"> 
