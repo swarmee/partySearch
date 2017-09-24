@@ -62,7 +62,11 @@ The below worked example is the "generified" version of what we setup within our
 
 ## Modelling Example
 
-In this section of the guide we provide a worked example of how to create the above data model in elasticsearch, populate it with sample data, and query event level and party level attributes. This example assumes that we are modelling real estate transactions. The basic data model has been fleshed out below. Noting that each name, address, account and id has a type (e.g. a party may have a main and a postal address).
+In this section of the guide we provide a worked example of how to;
+- Create the above data model in elasticsearch, 
+- Populate it with sample data, and 
+- Query event level and party level attributes. 
+This example assumes that we are modelling real estate transactions. The basic data model has been fleshed out below. Noting that each name, address, account and id has a type (e.g. a party may have a main and a postal address).
 
 <p align="center"> 
 <img src="https://raw.githubusercontent.com/swarmee/partySearch/master/images/real-estate-data-model.png"  width="50%" height="50%">
