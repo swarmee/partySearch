@@ -1,7 +1,7 @@
 # Complex Event Modelling in Elasticsearch
 
 ## Executive Summary
-This guide walks through the theory and practice of modelling complex data events in elasticsearch, with the aim of a single event level datastore being able to support both event and party analysis. It is targeted at data architects designing how data should be modelled in elasticsearch for general business intelligence as well as fraud analysis. 
+This guide walks through the theory and practice of modelling complex data events in elasticsearch, with the aim of providing a single event level datastore that is able to support both event and party analysis. It is targeted at data architects designing how data should be modelled in elasticsearch for general business intelligence as well as fraud analysis. 
 
 ## Modelling Theory 
 Historically our primary approach to store and analyse complex real world events has been relational database tables. Complex events are generally modelled in the below structure leveraging foreign key relationships to represent the context of the characteristics within the original event. The model attempts to model all events in a way that standardises the location of common attributes.
@@ -25,10 +25,10 @@ A partially flatten data model can be leveraged to reduce the number of columns 
 <img src="https://raw.githubusercontent.com/swarmee/partySearch/master/images/Partially-flat-data-model.png">
 </p>
 
-When designing a new and large analytical application we wondered if there were any new technical options avalible that;
-- Allowed for distributed loading and searching (i.e. a solution that would scale),
-- Supported storage of common attributes in the same logical location in the data model (i.e. allowing  simplistic searches and limiting data redundancy),
-- Allowed us to maintain only the raw underlying events - rather than multiple summarisation levels to meet different event and party level analysis requirements. 
+When designing a new and large analytical application we wondered if there were any new technical options available that provided the best of both approaches described above. Specifically;
+- Supported logically simple serches (i.e. storage of common attributes in the same logical location in the data model) while limiting data redundancy similar to the relational data model, and
+- Allowed for scalable distributed loading and searching perormance similar to the flatten data model. 
+And ideally allowed for aggregated analysis of party details (associatd to the underying events) without the need to maintain a derived data source.
 
 Elasticsearch promised to be able to meet these requirement so we ran up a PoC. The majority of the work involved in setting up the PoC was setting up the schema (or mapping in elasticsearch terms). Yeah elasticsearch is schema-less - however if you actually want to use it for anything production like you are going to need to define a mapping).
 
@@ -38,27 +38,27 @@ We modelled our events in elasticsearch using the below data model. It's very si
 </p>
 To support this product model in elasticsearch we relied heavily on the nested mapping data type. What this essentially does is tell elasticsearch to create a new “sub” document for each level in the data model below the highest level. The below table illustrates how one event explodes to multiple documents when stored in elasticsearch.  
 
-| eventId|eventDate |roleType|partySequence|partyHash |fullName|StreeAddress |     
+| eventId|eventDate |roleType|partySequence|partyType |fullName|StreeAddress |     
 | -------|--------- | -------|-------------| ---------|--------| ---------   |
 |1       |2009-01-01|        |             |          |        |             |
 |        |          |Seller  |             |          |        ||
-|        |          |        |1            |ASES23ssw2|||
+|        |          |        |1            |individual|||
 |        |||||James Brown||
 |        ||||||12 Wood St|
-|        |||2|ASD23D3ss|||
+|        |||2|individual|||
 ||||||Bill Brown||
 ||||||Billy Brown||
 |||||||1 High St|
 |||Buyer|||||
-||||1|DSERS31Ds|||
+||||1|individual|||
 ||||||Mark Rich||
 |||||||22 Low St|
 
 While there are many documents created, elasticsearch manages them all as one logical document so if you delete the event all of the nested documents are also deleted.
 
-This data model excelled in our requirements in relation to distributed loading/querying and storage of common attributes together. In relation to simplified searches we needed to develop some search templates to provide the required level of usability.  
+This elasticsearch configuration exceeded our expectations in relation to distributed loading/querying and storage of common attributes together for simplied searching. Elasticsearch was also able to support the aggregated analysis of party details without the need to maintain a derived data source.
 
-The below worked example is the "generified" version of what we were able to achieve within our PoC, it has been provided in the hope that others can learn from what we have done.   
+The below worked example is the "generified" version of what we setup within our PoC, it has been provided in the hope that others can learn from what we have done.   
 
 ## Modelling Example
 
