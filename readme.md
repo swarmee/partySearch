@@ -4,12 +4,12 @@
 This guide walks through the theory and practice of modelling complex data events in elasticsearch for speed and limited data storage, with the aim of providing a single event level datastore that is able to support both event and party analysis. It is targeted at data architects designing how data should be modelled in elasticsearch for general business intelligence as well as fraud analysis. 
 
 ## Modelling Theory 
-Historically our primary approach to store and analyse complex real world events has been relational database tables. Complex events are generally modelled in the below structure leveraging foreign key relationships to represent the context of the characteristics within the original event. The model attempts to model all events in a way that standardises the location of common attributes.
+Historically our primary approach to store and analyse complex real world events has been relational database tables. Complex events are generally modelled in the below structure leveraging foreign key relationships to represent the context of the characteristics within the original event. This approach attempts to model all events in a way that standardises the location of common attributes.
 <p align="center"> 
 <img src="https://raw.githubusercontent.com/swarmee/partySearch/master/images/Cross-reference-data-model.png">
 </p>
 When a new event comes in after some standardisation and embellishment, a check is made to determine if the name, address, account and/or ids already exist in the data holdings ready. If they do then a link in the cross reference table is made to the existing record, else a new record inserted in the Name, Address, Account or Id table (with a new primary key).
-The above approach affords great performance when doing a search for one particular characteristic because we only have standardised and unique data stored in the Name, Address, Account and Identifier tables. Similarly given a specific characteristic key it is fast to perform a search on the cross reference table to find all of the other characters associated to a given characteristic key. However this approach creates some challenges as we need to maintain transactional integrity of these tables (with blocking locks) - which at the end of the day means it’s hard to get these type of solutions to scale. 
+The above approach affords great performance when doing a search for one particular characteristic because we only have standardised and unique data stored in the Name, Address, Account and Identifier tables. Similarly given a specific characteristic key it is fast to perform a search on the cross reference table to find all of the other characters associated to a given characteristic key. However this approach creates some challenges as we need to maintain transactional integrity of these tables (with blocking locks) - which at the end of the day means it’s hard to get this approach to scale. 
 
 An alternative to the above approach is to flatten out the data model. Basically we remove all of the database keys and name the columns based on the party characteristics.
 
@@ -17,7 +17,7 @@ An alternative to the above approach is to flatten out the data model. Basically
 <img src="https://raw.githubusercontent.com/swarmee/partySearch/master/images/Flat-data-model.png">
 </p>
 
-This allows the loading and storage of the data to be distributed and scaled easily as their is no dependency on the data stored in the database when loading events. However it means querying and dealing with the results of queries is more complex as party details are not stored uniquely. It also results in massively wide rows if you dataset has multiple parties performing the same role or multiple groups of characteristics of the same type for one party (e.g. main and postal address). 
+This allows the loading and storage of the data to be distributed and scaled easily as their is no dependency on the data stored in the datastore when loading events. However it means querying and dealing with the results of queries is more complex as party details are not stored uniquely. It also results in massively wide rows if you dataset has multiple parties performing the same role or multiple groups of characteristics of the same type for one party (e.g. main and postal address). 
 
 A partially flatten data model can be leveraged to reduce the number of columns where the dataset has repeating groups of parties and characteristics (it’s very similar to joining all of the tables together in the relational data model). This approach is obviously inefficient as there is mass data duplication, and leads to the need for further logic to de-duplicate query results.   
 
@@ -38,13 +38,13 @@ We modelled our events in elasticsearch using the below data model. It's very si
 </p>
 To support this product model in elasticsearch we relied heavily on the nested mapping data type. What this essentially does is tell elasticsearch to create a new “sub” document for each level in the data model below the highest level. The below table illustrates how one event explodes to multiple documents when stored in elasticsearch.  
 
-| eventId|eventDate |roleType|partySequence|partyType |fullName|StreeAddress |     
-| -------|--------- | -------|-------------| ---------|--------| ---------   |
-|1       |2009-01-01|        |             |          |        |             |
-|        |          |Payer  |             |          |        ||
-|        |          |        |1            |individual|||
-|        |||||James Brown||
-|        ||||||12 Wood St|
+| eventId|eventDate |roleType|partySequence|partyType |fullName   |StreeAddress |     
+| -------|--------- | -------|-------------| ---------|--------   | ---------   |
+|1       |2009-01-01|        |             |          |           |             |
+|        |          |Payer   |             |          |           |             |
+|        |          |        |1            |individual|           |             |
+|        |          |        |             |          |James Brown|             |
+|        |          |        |             |          |           |12 Wood St   |
 |        |||2|individual|||
 ||||||Bill Brown||
 ||||||Billy Brown||
@@ -54,7 +54,7 @@ To support this product model in elasticsearch we relied heavily on the nested m
 ||||||Mark Rich||
 |||||||22 Low St|
 
-While there are many documents created, elasticsearch manages them all as one logical document so if you delete the event all of the nested documents are also deleted.
+While there are many documents created, elasticsearch manages them all as one logical document so if you delete/upsert the event all of the nested documents are also deleted/upserted.
 
 This elasticsearch configuration exceeded our expectations in relation to distributed loading/querying and storage of common attributes together for simplied searching. Elasticsearch was also able to support the aggregated analysis of party details without the need to maintain a derived data source.
 
@@ -65,7 +65,8 @@ The below worked example is the "generified" version of what we setup within our
 In this section of the guide we provide a worked example of how to;
 - Create the above data model in elasticsearch, 
 - Populate it with sample data, and 
-- Query event level and party level attributes. 
+- Query and aggregate event level attritbutues.
+- Query and aggregate party  level attritbutues.
 
 This example assumes that we are modelling real estate transactions. The basic data model has been fleshed out below. Noting that each name, address, account and id has a type (e.g. a party may have a main and a postal address).
 
@@ -88,13 +89,13 @@ Once the mapping has been loaded successfully the sample data can be loaded usin
 ```<./load-sample-data-using-curl>curl -H 'Content-Type: application/x-ndjson' -XPOST 'http://localhost:9200/real-estate-sales/sales/_bulk?pretty' --data-binary @real-estate-sales.sample.data.json```
 
 #### Simple Queries (event level characteristics)
-Querying attributes at the top level of the document structure is super simple. An example has been provided below. It searches for events with a transactionType of "Bank Initiated". You will note that it is using the transactionType.keyword field – which basically means it's doing an exact phase match. The query also illustrates; how to set the amount of data returned (default is 10 records), limit the fields returned, and sort the response data. 
+Querying attributes at the top level of the document structure is super simple. An example has been provided below. It searches for events with a transactionType of "Bank Initiated". You will note that it is using the transactionType.keyword field – which basically means it's doing an exact phase match rather than a terms search. The query also illustrates; how to set the amount of data returned (default is 10 records), limit the fields returned, and sort the response data. 
 
 ```<./dsl-queries>curl -H 'Content-Type: application/json' -XGET 'http://localhost:9200/real-estate-sales/_search?pretty' -d @event-level-search.dsl```
 
 
 #### Simple Aggregations (event level characteristics)
-Aggregations at the top level of the document structure is also super simple. An example has been provided below. It aggregates the number of sales per month. You'll note that the response size has been set to zero, the reason being is that if you do not set the size to zero, ten documents will also be returned in the response. 
+Aggregations at the top level of the document structure is also super simple. An example has been provided below. It aggregates the number of sales per month. You'll note that the response size has been set to zero, the reason being is that if you do not set the size to zero, the reponse will include the requsted aggregation and ten documents. 
 
 ```<./dsl-queries>curl -H 'Content-Type: application/json' -XGET 'http://localhost:9200/real-estate-sales/_search?pretty' -d @sales-per-month-aggregation.dsl```
 
@@ -103,21 +104,23 @@ A terms aggregation has been provided below, it breaks down the number of sales 
 ```<./dsl-queries>curl -H 'Content-Type: application/json' -XGET 'http://localhost:9200/real-estate-sales/_search?pretty' -d @sales-per-month-aggregation.dsl```
 
 #### Nesting Queries 
-Nested queries allow you to search the nested documents that were created as a result of the nested mapping. Using the inner-hits option and excluding _source from the response you can search each level of the nested hierarchy, as if they were stored separately.
+Nested queries allow you to search the nested documents that were created as a result of the nested mapping. Using the inner-hits option and excluding `_source` from the response you can search each level of the nested hierarchy, as if they were stored separately.
 
-Nested Example 1 - The below query searches for all parties with a specific name and address. This query uses _must_ parameter which means to match the document must have both of the characteristics specified. 
+Nested Example 1 - The below query searches for all parties with a specific name and address. This query uses the '_must_' parameter which means to match the document must have both of the characteristics specified. 
 
 ```<./dsl-queries>curl  -H 'Content-Type: application/json' -XGET 'http://localhost:9200/real-estate-sales/_search?pretty' --data "@inner-hits-name-address-search.dsl"```
 
-The only thing to remember is that you get one result for each nested document that the name and address combination were on, what this means is that the results are not unique (in the partySearch section below we describe how to get unique hits returned).
+The thing to remember is that you get one result for each nested document that the name and address combination were on, what this means is that the results are not unique (in the partySearch section below we describe how to get unique hits returned).
 
-Nested Example 2 - The below query searches for all parties with at least two of three search criterias across ; name, address and identification.  This query uses the _should_ parameter and the minimum should match parameter to narrow the results to only parties that have two of the three specified critiera.
+Nested Example 2 - The below query searches for all parties with at least two of the three search criterias across ; name, address and identification.  This query uses the '_should_' parameter and the _minimum should match_ parameter to narrow the results to only parties that have two of the three specified critiera.
 
 ```<./dsl-queries>curl  -H 'Content-Type: application/json' -XGET 'http://localhost:9200/real-estate-sales/_search?pretty' --data "@inner-hits-name-address-id-search.dsl"```
 
 
 #### Nesting Aggregations 
-Nested aggregations can be performed in the same way that simple aggregations are performed. An example has been provided below  of the most common first names within the sample dataset.  The terms aggregation includes two parameters, _size_ which limits the name results to the two five names, and shard_size which is used to set how many results are returned from each shard before the results are consolidated. 
+Nested aggregations can be performed in the same way that simple aggregations are performed. An example has been provided below  of the most common first names within the sample dataset.  The terms aggregation includes the parameters
+- '_size_' which limits the results to the highest frequency names (noting the above limitations in relation to how term aggregations are executed), and 
+- '_shard_size_' which is used to set how many results are returned from each shard before the results are consolidated. 
 
 ```<./dsl-queries>curl  -H 'Content-Type: application/json' -XGET 'http://localhost:9200/real-estate-sales/_search?pretty' --data "@./first-name-term-aggregration.dsl"```
 
