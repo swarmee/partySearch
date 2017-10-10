@@ -1,5 +1,35 @@
 {
   "settings": {
+    "index": {
+      "analysis": {
+        "filter": {
+          "streetAddressType": {
+            "type": "synonym",
+            "synonyms": [
+              "road,rd",
+              "avenue,ave",
+              "corner,cnr",
+              "drive,dr",
+              "highway,hwy",
+              "north,nth",
+              "south,sth",
+              "place,pl",
+              "street,st"
+            ],
+            "tokenizer": "whitespace"
+          }
+        },
+        "analyzer": {
+          "streetAddressTypeSynonyms": {
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "streetAddressType"
+            ]
+          }
+        }
+      }
+    },
     "number_of_shards": 3,
     "number_of_replicas": 1,
     "index.refresh_interval" : "3s"
@@ -104,6 +134,8 @@
                     },
                     "streetAddress": {
                       "type": "text",
+                      "analyzer": "standard",
+                      "search_analyzer": "streetAddressTypeSynonyms",
                       "fields": {
                         "keyword": {
                           "type": "keyword",
@@ -266,4 +298,3 @@
     }
   }
 }
-
