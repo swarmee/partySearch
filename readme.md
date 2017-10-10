@@ -78,7 +78,7 @@ This example assumes that we are modelling real estate transactions. The basic d
 
 It is assumed that you have an elasticsearch cluster running version 6 (beta 2 or up) if not go here → https://www.elastic.co/guide/en/elasticsearch/reference/current/installation.html). The below scripts use the curl command to interact with elasticsearch they assume you are running these commands on the local machine (i.e. localhost) and that the elasticsearch cluster has authentication turned off (if you have authentication turned on you can submit in your username and password with curl requests). 
 
-Some sample data matching the above example has been saved into the repository. However before loading, elasticsearch needs to be told how you want the data saved - this is called a mapping. The mapping for the sample data can be posted into elastic with the following command.
+Some sample data matching the above example has been saved into the repository. However before loading, elasticsearch needs to be told how you want the data stored - this is called a mapping. The mapping for the sample data can be posted into elastic with the following command.
 
 ```<./load-sample-data-using-curl>curl -H 'Content-Type: application/json' -XPUT 'http://localhost:9200/real-estate-sales?pretty' -d @real-estate-sales.mapping.json```
 
