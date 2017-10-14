@@ -26,9 +26,9 @@ A partially flatten data model can be leveraged to reduce the number of columns 
 </p>
 
 When designing a new and large analytical application we wondered if there were any new technical options available that provided the best of both approaches described above. Specifically;
-- Supported logically simple serches (i.e. storage of common attributes in the same logical location in the data model) while limiting data redundancy similar to the relational data model, and
-- Allowed for scalable distributed loading and searching perormance similar to the flatten data model. 
-And ideally allowed for aggregated analysis of party details (associatd to the underying events) without the need to maintain a derived data source.
+- Supported logically simple searches (i.e. storage of common attributes in the same logical location in the data model) while limiting data redundancy similar to the relational data model, and
+- Allowed for scalable distributed loading and searching performance similar to the flatten data model. 
+And ideally allowed for aggregated analysis of party details (associated to the underlying events) without the need to maintain a derived data source.
 
 Elasticsearch promised to be able to meet these requirement so we ran up a PoC. The majority of the work involved in setting up the PoC was setting up the schema (or mapping in elasticsearch terms). Yeah elasticsearch is schema-less - however if you actually want to use it for anything production like you are going to need to define a mapping).
 
@@ -56,7 +56,7 @@ To support this product model in elasticsearch we relied heavily on the nested m
 
 While there are many documents created, elasticsearch manages them all as one logical document so if you delete/upsert the event all of the nested documents are also deleted/upserted.
 
-This elasticsearch configuration exceeded our expectations in relation to distributed loading/querying and storage of common attributes together for simplied searching. Elasticsearch was also able to support the aggregated analysis of party details without the need to maintain a derived data source.
+This elasticsearch configuration exceeded our expectations in relation to distributed loading/querying and storage of common attributes together for simplified searching. Elasticsearch was also able to support the aggregated analysis of party details without the need to maintain a derived data source.
 
 The below worked example is the "generified" version of what we setup within our PoC, it has been provided in the hope that others can learn from what we have done.   
 
@@ -65,8 +65,8 @@ The below worked example is the "generified" version of what we setup within our
 In this section of the guide we provide a worked example of how to;
 - Create the above data model in elasticsearch, 
 - Populate it with sample data, and 
-- Query and aggregate event level attritbutues.
-- Query and aggregate party  level attritbutues.
+- Query and aggregate event level attributes.
+- Query and aggregate party  level attributes.
 
 This example assumes that we are modelling real estate transactions. The basic data model has been fleshed out below. Noting that each name, address, account and id has a type (e.g. a party may have a main and a postal address).
 
@@ -95,7 +95,7 @@ Querying attributes at the top level of the document structure is super simple. 
 
 
 #### Simple Aggregations (event level characteristics)
-Aggregations at the top level of the document structure is also super simple. An example has been provided below. It aggregates the number of sales per month. You'll note that the response size has been set to zero, the reason being is that if you do not set the size to zero, the reponse will include the requsted aggregation and ten documents. 
+Aggregations at the top level of the document structure is also super simple. An example has been provided below. It aggregates the number of sales per month. You'll note that the response size has been set to zero, the reason being is that if you do not set the size to zero, the response will include the requested aggregation and ten documents. 
 
 ```<./dsl-queries>curl -H 'Content-Type: application/json' -XGET 'http://localhost:9200/real-estate-sales/_search?pretty' -d @sales-per-month-aggregation.dsl```
 
@@ -112,7 +112,7 @@ Nested Example 1 - The below query searches for all parties with a specific name
 
 The thing to remember is that you get one result for each nested document that the name and address combination were on, what this means is that the results are not unique (in the partySearch section below we describe how to get unique hits returned).
 
-Nested Example 2 - The below query searches for all parties with at least two of the three search criterias across ; name, address and identification.  This query uses the '_should_' parameter and the _minimum should match_ parameter to narrow the results to only parties that have two of the three specified critiera.
+Nested Example 2 - The below query searches for all parties with at least two of the three search criterias across ; name, address and identification.  This query uses the '_should_' parameter and the _minimum should match_ parameter to narrow the results to only parties that have two of the three specified criteria.
 
 ```<./dsl-queries>curl  -H 'Content-Type: application/json' -XGET 'http://localhost:9200/real-estate-sales/_search?pretty' --data "@inner-hits-name-address-id-search.dsl"```
 
