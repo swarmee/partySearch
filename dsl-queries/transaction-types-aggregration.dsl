@@ -1,7 +1,3 @@
-########
-## Count of Sales Per Transaction Type 
-########
-POST /real-estate-sales/_search
 {
   "aggs": {
     "4": {
