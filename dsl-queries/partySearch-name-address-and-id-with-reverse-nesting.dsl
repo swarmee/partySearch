@@ -19,7 +19,7 @@
                           {
                             "match": {
                               "role.party.name.fullName": {
-                                "query": "jack Durian",
+                                "query": "jack",
                                 "operator": "and"
                               }
                             }
@@ -38,7 +38,7 @@
                           {
                             "match": {
                               "role.party.address.streetAddress": {
-                                "query": "Plums Road",
+                                "query": "Plums",
                                 "operator": "and"
                               }
                             }

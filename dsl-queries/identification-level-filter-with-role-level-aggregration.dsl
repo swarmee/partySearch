@@ -1,4 +1,3 @@
-POST /real-estate-sales/_search
 {
   "aggs": {
     "1": {
