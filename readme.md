@@ -101,7 +101,7 @@ Aggregations at the top level of the document structure is also super simple. An
 
 A terms aggregation has been provided below, it breaks down the number of sales by transaction type. Term aggregations are similar to group bys in SQL, however they are not exactly the same, due to elasticsearch’s distributed architecture effectively a SQL group by is performed on each shard in the cluster and the highest frequency results on each cluster are consolidated and then these results are aggregated. 
 
-```<./dsl-queries>curl -H 'Content-Type: application/json' -XGET 'http://localhost:9200/real-estate-sales/_search?pretty' -d @sales-per-month-aggregation.dsl```
+```<./dsl-queries>curl -H 'Content-Type: application/json' -XGET 'http://localhost:9200/real-estate-sales/_search?pretty' -d @transaction-types-aggregration.dsl```
 
 #### Nesting Queries 
 Nested queries allow you to search the nested documents that were created as a result of the nested mapping. Using the inner-hits option and excluding `_source` from the response you can search each level of the nested hierarchy, as if they were stored separately.
