@@ -1,0 +1,42 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
+  "title": "Nested bar chart of address states",
+  "data": {
+    "url": {
+      "index": "real-estate-sales",
+      "body": {
+  "aggs": {
+    "nesting": {
+      "nested": {
+        "path": "role.party.address"
+      },
+      "aggs": {
+        "aggregration": {
+          "terms": {
+            "field": "role.party.address.state.keyword",
+            "size": 100
+          }
+        }
+      }
+    }
+  }, "size" : 0
+}
+    },
+    "format": {
+      "property": "aggregations.nesting.aggregration.buckets"
+    }
+  },
+  "mark": "bar",
+  "encoding": {
+    "x": {
+      "field": "key",
+      "type": "ordinal",
+      "axis": {"title": "party state"}
+    },
+    "y": {
+      "field": "doc_count",
+      "type": "quantitative",
+      "axis": {"title": "number of transactions"},
+    }
+  }
+}
