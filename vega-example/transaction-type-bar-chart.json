@@ -1,0 +1,31 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
+  "title": "simple bar chart of transaction types",
+  "data": {
+    "url": {
+      "index": "real-estate-sales",
+      "body": {
+        "aggs": {
+          "grouping": {"terms": {"field": "transactionType.keyword"}}
+        },
+        "size": 0
+      }
+    },
+    "format": {
+      "property": "aggregations.grouping.buckets"
+    }
+  },
+  "mark": "bar",
+  "encoding": {
+    "x": {
+      "field": "key",
+      "type": "ordinal",
+      "axis": {"title": "transaction type"}
+    },
+    "y": {
+      "field": "doc_count",
+      "type": "quantitative",
+      "axis": {"title": "number of transactions"}
+    }
+  }
+}
