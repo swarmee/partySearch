@@ -1,0 +1,51 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
+  "title": "Nested bar chart of Name states",
+  "data": {
+    "url": {
+      "index": "real-estate-sales",
+      "body": {
+        "aggs": {
+          "nesting": {
+            "nested": {"path": "role.party.name"},
+            "aggs": {
+              "aggregration": {
+                "terms": {
+                  "field": "role.party.name.fullName.keyword",
+                  "size": 100
+                }
+              }
+            }
+          }
+        },
+        "size": 0
+      }
+    },
+    "format": {
+      "property": "aggregations.nesting.aggregration.buckets"
+    }
+  },
+  "transform": [
+    {
+      "calculate": "datum.doc_count > 5 ? 'High' : 'Low'",
+      "as": "danger"
+    }
+  ],
+  "mark": "bar",
+  "encoding": {
+    "x": {
+      "field": "key",
+      "type": "ordinal",
+      "sort": {"field": "doc_count"},
+      "axis": {"title": "party fullName"}
+    },
+    "y": {
+      "field": "doc_count",
+      "type": "quantitative",
+      "axis": {"title": "number of transactions"}
+    },
+    "color": {"field": "danger"},
+    "size": {"value": "8"},
+    "shape": {"value": "circle"}
+  }
+}
