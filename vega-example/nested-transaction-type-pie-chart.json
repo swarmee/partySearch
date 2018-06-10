@@ -1,0 +1,99 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "width": 400,
+  "height": 400,
+  "autosize": "true",
+  "signals": [
+    {
+      "name": "startAngle",
+      "value": 0,
+      "bind": {"input": "range", "min": 0, "max": 6.29, "step": 0.01}
+    },
+    {
+      "name": "endAngle",
+      "value": 6.29,
+      "bind": {"input": "range", "min": 0, "max": 6.29, "step": 0.01}
+    },
+    {"name": "padAngle", "value": 0, "bind": {"input": "range", "min": 0, "max": 0.1}},
+    {
+      "name": "innerRadius",
+      "value": 100,
+      "bind": {"input": "range", "min": 0, "max": 150, "step": 1}
+    },
+    {
+      "name": "cornerRadius",
+      "value": 0,
+      "bind": {"input": "range", "min": 0, "max": 10, "step": 0.5}
+    }
+  ],
+  "data": [
+    {
+      "name": "table",
+      "url": {
+        "index": "real-estate-sales",
+        "body": {
+          "size": 0,
+          "aggs": {
+            "aggregration": {"terms": {"field": "transactionType.keyword", "size": 10}}
+          }
+        }
+      },
+      "format": {"type": "json", "property": "aggregations.aggregration.buckets"},
+      "transform": [
+        {
+          "type": "pie",
+          "field": "doc_count",
+          "startAngle": {"signal": "startAngle"},
+          "endAngle": {"signal": "endAngle"}
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {"name": "color", "type": "ordinal", "range": {"scheme": "category20"}},
+    {
+      "name": "r",
+      "type": "ordinal",
+      "domain": {"data": "table", "field": "doc_count"},
+      "zero": true,
+      "range": [90, 90]
+    }
+  ],
+  "marks": [
+    {
+      "type": "arc",
+      "from": {"data": "table"},
+      "encode": {
+        "enter": {
+          "fill": {"scale": "color", "field": "key"},
+          "x": {"signal": "width / 2"},
+          "y": {"signal": "height / 2"}
+        },
+        "update": {
+          "startAngle": {"field": "startAngle"},
+          "endAngle": {"field": "endAngle"},
+          "padAngle": {"signal": "padAngle"},
+          "innerRadius": {"signal": "innerRadius"},
+          "outerRadius": {"signal": "width / 2"},
+          "cornerRadius": {"signal": "cornerRadius"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {"data": "table"},
+      "encode": {
+        "enter": {
+          "x": {"field": {"group": "width"}, "mult": 0.5},
+          "y": {"field": {"group": "height"}, "mult": 0.5},
+          "radius": {"scale": "r", "field": "doc_count", "offset": 90},
+          "theta": {"signal": "(datum.startAngle + datum.endAngle)/2"},
+          "fill": {"value": "#000"},
+          "align": {"value": "center"},
+          "baseline": {"value": "middle"},
+          "text": {"field": "key"}
+        }
+      }
+    }
+  ]
+}
